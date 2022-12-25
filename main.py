@@ -4,8 +4,7 @@ class Man:
     def __init__(self):
         self.width = 150
         self.height = 100
-        self.image = pygame.image.load(''
-                                       )
+        self.image = pygame.image.load('1648041537_16-kartinkin-net-p-sport-multyashnie-kartinki-17 (1).png')
         self.rect = self.image.get_rect()
     def move_up(self):
         pass
@@ -24,10 +23,10 @@ class Enemy:
 
 
 
-width = 1500
+width =1500
 height = 800
 
-x = 1000
+x = 1500
 y = 1000
 
 red = (255, 0, 0)
@@ -50,8 +49,13 @@ while True:
             exit()
 
 
-
     win.fill((255, 255, 255))
-    pygame.draw.line(win, red, (500, 0), (500, 1000), 4)
+    x, y = pygame.mouse.get_pos()
+    pressed = pygame.mouse.get_pressed()
+    if pressed[0]:
+        print("бросок")
+    pygame.draw.circle(win, red, (750, 400), 100)
+    pygame.draw.circle(win,red, (250,400), 250)
+    pygame.draw.circle(win, red, (1250, 400), 250)
+    pygame.draw.line(win, black, (750, 0), (750, 1000), 3)
     pygame.display.update()
-
