@@ -1,19 +1,14 @@
 import pygame
 
-class Man:
+class Player(pygame.sprite.Sprite):
     def __init__(self):
-        self.width = 150
-        self.height = 100
-        self.image = pygame.image.load('1648041537_16-kartinkin-net-p-sport-multyashnie-kartinki-17 (1).png')
+        super().__init__()
+        self.image = pygame.image.load('')
+        self.image = self.image.convert()
+        colorkey = self.image.get_at((0, 0))
+        self.image.set_colorkey(colorkey)
+        self.image = pygame.transform.scale(self.image, (300, 300))
         self.rect = self.image.get_rect()
-    def move_up(self):
-        pass
-    def move_down(self):
-        pass
-    def move_left(self):
-        pass
-    def move_right(self):
-        pass
 class Enemy:
     def __init__(self):
         self.x = 50
