@@ -1,10 +1,10 @@
 import pygame
 import sqlite3
-def create_table(таблица счета):
+def create_table(таблица):
     # Здесь name - название таблицы
     # Создаем запрос на создание таблицы, если таковой еще не существует
     que_create = '''
-        CREATE TABLE IF NOT EXISTS ''' + name + '''(
+        CREATE TABLE IF NOT EXISTS ''' + таблица + '''(
             id INTEGER PRIMARY KEY,
             name TEXT,
             score TEXT
@@ -17,12 +17,12 @@ def create_table(таблица счета):
     database.commit()
 
 # Функция получения данных
-def get_data(table_name, column):
+def get_data(таблица , column):
     # Здесь column - поля таблицы, которые хотим получить(столбцы)
     # table_name - имя таблицы, из которой хотим получить данные
     # Создаем запрос на получение данных
     que_select = '''
-        SELECT ''' + column + ''' FROM ''' + table_name + '''
+        SELECT ''' + column + ''' FROM '''+ таблица + '''
     '''
 
     # Получаем результат
@@ -33,13 +33,13 @@ def get_data(table_name, column):
     return data
 
 # Функция занесения данных в таблицу
-def insert_data(table_name, column, values):
+def insert_data(таблица , column, values):
     # Здесь table_name - название таблицы, в которую хотите занести данные
     # column - поля(столбцы) в которые хотите занести данные
     # value - сами данные
     # Создаем запрос на внесение данных в таблицу
     que_insert = '''
-            INSERT INTO ''' + table_name + ''' (''' + column + ''') VALUES (''' + values + ''') 
+            INSERT INTO ''' + таблица + ''' (''' + column + ''') VALUES (''' + values + ''') 
         '''
 
     # С помощью курсора выполняем запрос
@@ -67,6 +67,9 @@ insert_data('scores', 'name, score', "'', 10")
 print(get_data('scores', 'name, score'))
 
 database.close()
+
+class Ring():
+
 class Scores():
     def __init__(self, screen, stats):
         self.screen = screen
@@ -77,23 +80,32 @@ class Scores():
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('png-clipart-graphics-basketball-backboard-sport-cartoon.png')
+        self.image = pygame.image.load('')
         self.image = self.image.convert()
         colorkey = self.image.get_at((0, 0))
         self.image.set_colorkey(colorkey)
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
+        self.rect.x = self.rect.width
+        self.rect.y = self.rect.height
+        self.rect.x = 750
+        self.rect.y = 150
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('images.jfif')
+        self.image = pygame.image.load('')
         self.image = self.image.convert()
         colorkey = self.image.get_at((0, 0))
         self.image.set_colorkey(colorkey)
         self.image = pygame.transform.scale(self.image, (300, 300))
         self.rect = self.image.get_rect()
+        self.rect.x = self.rect.width
+        self.rect.y = self.rect.height
+        self.rect.x = 0
+        self.rect.y = 150
+
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -117,8 +129,8 @@ class Enem(pygame.sprite.Sprite):
         self.image.set_colorkey(colorkey)
         self.image = pygame.transform.scale(self.image, (300, 300))
         self.rect = self.image.get_rect()
-        self.rect.left = 0
-        self.rect.top = 0
+        self.rect.x = 1500
+        self.rect.y = 400
 
 
 class DatabaseObject:
@@ -204,6 +216,6 @@ while True:
     pygame.draw.circle(win, white, (75, 400), 55)
     all_sprites.update()
     enemy_sprites.update()
-    # all_sprites.draw(win)
-    # enemy_sprites.draw(win)
+    all_sprites.draw(win)
+    enemy_sprites.draw(win)
     pygame.display.update()
