@@ -1,74 +1,5 @@
 import pygame
-import sqlite3
-def create_table(таблица):
-    # Здесь name - название таблицы
-    # Создаем запрос на создание таблицы, если таковой еще не существует
-    que_create = '''
-        CREATE TABLE IF NOT EXISTS ''' + таблица + '''(
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            score TEXT
-        )
-    '''
 
-    # С помощью курсора выполняем запрос
-    cur.execute(que_create)
-    # Сохраняем изменения в базе данных
-    database.commit()
-
-# Функция получения данных
-def get_data(таблица , column):
-    # Здесь column - поля таблицы, которые хотим получить(столбцы)
-    # table_name - имя таблицы, из которой хотим получить данные
-    # Создаем запрос на получение данных
-    que_select = '''
-        SELECT ''' + column + ''' FROM '''+ таблица + '''
-    '''
-
-    # Получаем результат
-    result = cur.execute(que_select)
-    # Получаем все строки из результата
-    data = result.fetchall()
-    # Возвращаем полученные строки
-    return data
-
-# Функция занесения данных в таблицу
-def insert_data(таблица , column, values):
-    # Здесь table_name - название таблицы, в которую хотите занести данные
-    # column - поля(столбцы) в которые хотите занести данные
-    # value - сами данные
-    # Создаем запрос на внесение данных в таблицу
-    que_insert = '''
-            INSERT INTO ''' + таблица + ''' (''' + column + ''') VALUES (''' + values + ''') 
-        '''
-
-    # С помощью курсора выполняем запрос
-    cur.execute(que_insert)
-    # Сохраняем изменения в базе данных
-    database.commit()
-
-
-# Создаем подключение в базе данных
-database = sqlite3.connect('game.sqlite')
-
-# Создаем курсор, который дальше будет общаться с базой
-cur = database.cursor()
-
-# Вызываем функцию создания таблицы с названием 'scores'
-create_table('scores')
-
-# Вносим в таблицу с названием 'scores' данные
-# Обратите внимание, что вторым аргументом вводятся поля(колонки/столбцы), в которые вы хотите внести данные. Вводятся они через запятую и через пробел
-# Третьим аргументом идут сами данные. Обратите внимание, что здесь стоят двойные кавычки("")
-# Чтобы ввести текстовые данные, необходимо поставить еще и одинарные кавычкы, иначе работать НЕ БУДЕТ
-insert_data('scores', 'name, score', "'', 10")
-
-
-print(get_data('scores', 'name, score'))
-
-database.close()
-
-class Ring():
 
 class Scores():
     def __init__(self, screen, stats):
@@ -80,7 +11,7 @@ class Scores():
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('')
+        self.image = pygame.image.load('png-clipart-graphics-basketball-backboard-sport-cartoon.png')
         self.image = self.image.convert()
         colorkey = self.image.get_at((0, 0))
         self.image.set_colorkey(colorkey)
@@ -88,23 +19,24 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
-        self.rect.x = 750
-        self.rect.y = 150
+        self.rect.x = 700
+        self.rect.y = 350
+
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('')
+        self.image = pygame.image.load('images.jfif')
         self.image = self.image.convert()
         colorkey = self.image.get_at((0, 0))
         self.image.set_colorkey(colorkey)
-        self.image = pygame.transform.scale(self.image, (300, 300))
+        self.image = pygame.transform.scale(self.image, (150, 150))
         self.rect = self.image.get_rect()
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
-        self.rect.x = 0
-        self.rect.y = 150
+        self.rect.x = 100
+        self.rect.y = 325
 
 
     def update(self):
@@ -123,14 +55,16 @@ class Enem(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('images.jfif')
+        self.image = pygame.image.load('images (2).jfif')
         self.image = self.image.convert()
         colorkey = self.image.get_at((0, 0))
         self.image.set_colorkey(colorkey)
-        self.image = pygame.transform.scale(self.image, (300, 300))
+        self.image = pygame.transform.scale(self.image, (150, 150))
         self.rect = self.image.get_rect()
-        self.rect.x = 1500
-        self.rect.y = 400
+        self.rect.x = 1000
+        self.rect.y = 325
+        self.speed = 10
+        self.score = 1
 
 
 class DatabaseObject:
@@ -169,7 +103,8 @@ player = Player()
 
 enemy = Enem()
 
-enemy.rect.left = 200
+enemy.rect.left = 1250
+
 
 all_sprites.add(player)
 
@@ -181,13 +116,16 @@ all_sprites.add(ball)
 enemy_sprites.add(ball)
 
 clock = pygame.time.Clock()
+#Ball.width >= 1425 and ball.x <= 1425 + 130
+#Ball.width >= 75 and Ball.x <= 75 + 130
 
+hits = pygame.sprite.spritecollide(ball, enemy_sprites, True)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
 
-    hits = pygame.sprite.spritecollide(ball, enemy_sprites, True)
+
 
     win.fill((255, 255, 255))
     x, y = pygame.mouse.get_pos()
@@ -214,8 +152,14 @@ while True:
     pygame.draw.line(win, black, (150, 475), (150, 325), 3)
     pygame.draw.circle(win, black, (75, 400), 65)
     pygame.draw.circle(win, white, (75, 400), 55)
-    all_sprites.update()
+    pygame.draw.line(win, black, (1350, 325), (1350, 475), 3)
+    pygame.draw.line(win, black, (1450, 475), (1350, 475), 3)
+    pygame.draw.line(win, black, (1350, 325), (1475, 325), 3)
+    pygame.draw.circle(win, black, (1425, 400), 65)
+    pygame.draw.circle(win, white, (1425, 400), 55)
     enemy_sprites.update()
-    all_sprites.draw(win)
+    all_sprites.update()
     enemy_sprites.draw(win)
+    all_sprites.draw(win)
     pygame.display.update()
+
