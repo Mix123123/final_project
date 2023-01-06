@@ -17,11 +17,12 @@ class Ball(pygame.sprite.Sprite):
         self.image.set_colorkey(colorkey)
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
-        self.rect.x = self.rect.width
-        self.rect.y = self.rect.height
-        self.rect.x = 700
-        self.rect.y = 350
-
+        self.rect.left = self.rect.width
+        self.rect.top = self.rect.height
+        self.rect.left = 700
+        self.rect.top = 350
+    def update(self):
+        self.rect.left += 5
 
 
 class Player(pygame.sprite.Sprite):
@@ -61,11 +62,12 @@ class Enem(pygame.sprite.Sprite):
         self.image.set_colorkey(colorkey)
         self.image = pygame.transform.scale(self.image, (150, 150))
         self.rect = self.image.get_rect()
-        self.rect.x = 1000
-        self.rect.y = 325
+        self.rect.left = 1000
+        self.rect.top = 325
         self.speed = 10
         self.score = 1
-
+    def update(self):
+        self.rect.left += 5
 
 class DatabaseObject:
     def create_table(self):
@@ -113,7 +115,7 @@ enemy_sprites = pygame.sprite.Group()
 enemy_sprites.add(enemy)
 
 all_sprites.add(ball)
-enemy_sprites.add(ball)
+
 
 clock = pygame.time.Clock()
 #Ball.width >= 1425 and ball.x <= 1425 + 130
@@ -123,7 +125,9 @@ hits = pygame.sprite.spritecollide(ball, enemy_sprites, True)
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            exit()
+            if(ball.rect.left >= 1425 and ball.rect.left <= (1425 + 55 * 2)):
+                if (ball.rect.left >= 1425 and ball.rect.left <=(1425 + (55 * 2))) and (ball.rect.top >= 400 and ball.rect.top <=(400+(55 * 2))):
+                        exit()
 
 
 
@@ -160,6 +164,7 @@ while True:
     enemy_sprites.update()
     all_sprites.update()
     enemy_sprites.draw(win)
+    all_sprites.draw(win)
     all_sprites.draw(win)
     pygame.display.update()
 
