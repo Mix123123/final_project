@@ -1,4 +1,17 @@
 import pygame
+import sqlite3
+
+import database
+
+def create_table(name):
+    # Здесь name - название таблицы
+    # Создаем запрос на создание таблицы, если таковой еще не существует
+    que_create = '''
+        CREATE TABLE IF NOT EXISTS ''' + name + '''(
+            id INTEGER PRIMARY KEY,
+            score TEXT
+        )
+    '''
 
 
 class Scores():
@@ -8,12 +21,6 @@ class Scores():
         self.stats = stats
         self.reset.stats
 
-class Stats():
-    def __init__(self):
-        self.reset_stats()
-
-    def reset_stats(self):
-        self.ball_left = 700
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
@@ -30,11 +37,13 @@ class Ball(pygame.sprite.Sprite):
         self.rect.top = 350
     def update(self):
         self.rect.left += 1
-        self.rect.top += 1
+        #self.rect.top += 1
+
 
 class Stats():
     def __init__(self):
-        self.reset_stats()
+        if ball.rect.left <= 1500:
+            self.reset_stats()
 
     def reset_stats(self):
         self.ball_left = 700
@@ -58,13 +67,13 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
-            self.rect.top -= 5
+            self.rect.top -= 1
         if keys[pygame.K_DOWN]:
-            self.rect.top += 5
+            self.rect.top += 1
         if keys[pygame.K_LEFT]:
-            self.rect.left -= 5
+            self.rect.left -= 1
         if keys[pygame.K_RIGHT]:
-            self.rect.left += 5
+            self.rect.left += 1
 
 
 class Enem(pygame.sprite.Sprite):
@@ -81,18 +90,14 @@ class Enem(pygame.sprite.Sprite):
         self.rect.top = 325
         self.speed = 10
         self.score = 1
-    #def update(self):
-        #self.rect.left += 5
+    def update(self):
+        if self.rect.top == height:
+            self.rect.top = 0
+        else:
+            self.rect.top += 1
 
-class DatabaseObject:
-    def create_table(self):
-        pass
 
-    def insert_data(self):
-        pass
 
-    def get_data(self, table_name):
-        pass
 
 
 width = 1500
@@ -122,6 +127,7 @@ enemy = Enem()
 
 enemy.rect.left = 1250
 
+create_table('scores')
 
 all_sprites.add(player)
 
@@ -133,25 +139,29 @@ all_sprites.add(ball)
 
 
 clock = pygame.time.Clock()
-#Ball.width >= 1425 and ball.x <= 1425 + 130
-#Ball.width >= 75 and Ball.x <= 75 + 130
+
 
 hits = pygame.sprite.spritecollide(ball, enemy_sprites, True)
+
+scores = 0
+
+if game_over:
+    database.insert_data('scores', 'name, score', str(scores))
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            if(ball.rect.left >= 1425 and ball.rect.left <= (1425 + 55 * 2)):
-                if (ball.rect.left >= 1425 and ball.rect.left <=(1425 + (55 * 2))) and (ball.rect.top >= 400 and ball.rect.top <=(400+(55 * 2))):
-                        exit()
+                exit()
 
-
-
+    if(ball.rect.left >= 1425 and ball.rect.left <= (1425 + 55)) and (ball.rect.top >= 400 - 55 and ball.rect.top <=(400+ 55)):
+        scores += 1
+        ball.rect.left = 700
+        ball.rect.top = 350
     win.fill((255, 255, 255))
     x, y = pygame.mouse.get_pos()
     pressed = pygame.mouse.get_pressed()
     if pressed[0]:
-        print("бросок")
-
+        print("1")
     pygame.draw.circle(win, red, (750, 400), 100)
     pygame.draw.circle(win, red, (150, 400), 250)
     pygame.draw.circle(win, red, (1350, 400), 250)
@@ -172,14 +182,13 @@ while True:
     pygame.draw.circle(win, black, (75, 400), 65)
     pygame.draw.circle(win, white, (75, 400), 55)
     pygame.draw.line(win, black, (1350, 325), (1350, 475), 3)
-    pygame.draw.line(win, black, (1450, 475), (1350, 475), 3)
-    pygame.draw.line(win, black, (1350, 325), (1475, 325), 3)
+    pygame.draw.line(win, black, (1350, 475), (1500, 475), 3)
+    pygame.draw.line(win, black, (1350, 325), (1500, 325), 3)
     pygame.draw.circle(win, black, (1425, 400), 65)
     pygame.draw.circle(win, white, (1425, 400), 55)
     enemy_sprites.update()
     all_sprites.update()
     enemy_sprites.draw(win)
-    all_sprites.draw(win)
     all_sprites.draw(win)
     pygame.display.update()
 
