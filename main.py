@@ -6,7 +6,14 @@ class Scores():
         self.screen = screen
         self.screen_rect = screen.get_rect()
         self.stats = stats
+        self.reset.stats
 
+class Stats():
+    def __init__(self):
+        self.reset_stats()
+
+    def reset_stats(self):
+        self.ball_left = 700
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
@@ -22,7 +29,15 @@ class Ball(pygame.sprite.Sprite):
         self.rect.left = 700
         self.rect.top = 350
     def update(self):
-        self.rect.left += 5
+        self.rect.left += 1
+        self.rect.top += 1
+
+class Stats():
+    def __init__(self):
+        self.reset_stats()
+
+    def reset_stats(self):
+        self.ball_left = 700
 
 
 class Player(pygame.sprite.Sprite):
@@ -66,8 +81,8 @@ class Enem(pygame.sprite.Sprite):
         self.rect.top = 325
         self.speed = 10
         self.score = 1
-    def update(self):
-        self.rect.left += 5
+    #def update(self):
+        #self.rect.left += 5
 
 class DatabaseObject:
     def create_table(self):
