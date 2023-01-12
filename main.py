@@ -1,6 +1,6 @@
 import pygame
 import sqlite3
-
+import random
 import database
 
 def create_table(name):
@@ -34,10 +34,15 @@ class Ball(pygame.sprite.Sprite):
         self.rect.left = self.rect.width
         self.rect.top = self.rect.height
         self.rect.left = 700
-        self.rect.top = 350
+        self.rect.top = 325
+        self.otskok = False
+        self.narp = 0
+
     def update(self):
-        self.rect.left += 1
-        #self.rect.top += 1
+        if self.otskok:
+            if self.narp == 1:
+                self.rect.top += 1
+                self.rect.left += 1
 
 
 class Stats():
@@ -99,7 +104,6 @@ class Enem(pygame.sprite.Sprite):
 
 
 
-
 width = 1500
 height = 800
 
@@ -118,6 +122,7 @@ FPS = 60
 win = pygame.display.set_mode((width, height))
 
 all_sprites = pygame.sprite.Group()
+ball_sprites = pygame.sprite.Group()
 
 ball = Ball()
 
@@ -135,18 +140,17 @@ enemy_sprites = pygame.sprite.Group()
 
 enemy_sprites.add(enemy)
 
-all_sprites.add(ball)
+ball_sprites.add(ball)
+
 
 
 clock = pygame.time.Clock()
 
 
-hits = pygame.sprite.spritecollide(ball, enemy_sprites, True)
 
 scores = 0
 
-if game_over:
-    database.insert_data('scores', 'name, score', str(scores))
+
 
 while True:
     for event in pygame.event.get():
@@ -157,6 +161,10 @@ while True:
         scores += 1
         ball.rect.left = 700
         ball.rect.top = 350
+    hits = pygame.sprite.spritecollide(player, ball_sprites, False)
+    if len(hits) != 0:
+        ball.otskok = True
+        ball.narp = random.randint(1, 3)
     win.fill((255, 255, 255))
     x, y = pygame.mouse.get_pos()
     pressed = pygame.mouse.get_pressed()
@@ -188,7 +196,9 @@ while True:
     pygame.draw.circle(win, white, (1425, 400), 55)
     enemy_sprites.update()
     all_sprites.update()
+    ball_sprites.update()
     enemy_sprites.draw(win)
     all_sprites.draw(win)
+    ball_sprites.draw(win)
     pygame.display.update()
 
