@@ -43,15 +43,18 @@ class Ball(pygame.sprite.Sprite):
             if self.narp == 1:
                 self.rect.top += 1
                 self.rect.left += 1
+        if self.rect.left == width:
+            self.rect.left = 700
+        else:
+            self.rect.left += 1
 
+            class Stats():
+                def __init__(self):
+                    if ball.rect.left <= 1500:
+                        self.reset_stats()
 
-class Stats():
-    def __init__(self):
-        if ball.rect.left <= 1500:
-            self.reset_stats()
-
-    def reset_stats(self):
-        self.ball_left = 700
+                def reset_stats(self):
+                    self.ball_left = 700
 
 
 class Player(pygame.sprite.Sprite):
@@ -162,9 +165,14 @@ while True:
         ball.rect.left = 700
         ball.rect.top = 350
     hits = pygame.sprite.spritecollide(player, ball_sprites, False)
+    hits = pygame.sprite.spritecollide(enemy, ball_sprites, False)
     if len(hits) != 0:
         ball.otskok = True
         ball.narp = random.randint(1, 3)
+    hits = pygame.sprite.spritecollide(enemy, ball_sprites, False)
+    if len(hits) != 0:
+        ball.otskok = True
+        ball.narp = random.randint(3, 1)
     win.fill((255, 255, 255))
     x, y = pygame.mouse.get_pos()
     pressed = pygame.mouse.get_pressed()
