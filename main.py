@@ -39,11 +39,11 @@ class Ball(pygame.sprite.Sprite):
         self.narp = 0
     def update(self):
         if self.otskok:
-                self.rect.left += 5
+            self.rect.left += 5
         if self.rect.left == width:
             self.rect.left = 700
         else:
-            self.rect.left += 3
+            self.rect.left += 4
         if self.narp == 1:
             self.rect.top -= 3
             self.rect.left -= 3
@@ -52,7 +52,14 @@ class Ball(pygame.sprite.Sprite):
         if self.narp == 3:
             self.rect.top += 3
             self.rect.left -= 3
-
+        if self.rect.left <= 0:
+            self.narp == random.randint(1, 2)
+        if self.rect.bottom >= 800:
+            self.narp == random.randint(1, 2)
+        if self.rect.right >= 1500:
+            self.narp == random.randint(1, 2)
+        if self.rect.top <= 0:
+            self.narp == random.randint(1, 2)
 
 
             class Stats():
@@ -103,7 +110,7 @@ class Enem(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left = 1000
         self.rect.top = 325
-        self.speed = 10
+        self.speed = 100
         self.score = 1
     def update(self):
         if self.rect.top == height:
