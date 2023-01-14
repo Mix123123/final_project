@@ -181,7 +181,7 @@ while True:
         ball.narp = random.randint(1, 3)
     hits = pygame.sprite.spritecollide(enemy, ball_sprites, False)
     if len(hits) != 0:
-        ball.otskok = True
+        ball.otskok = False
         ball.narp = random.randint(1, 3)
     win.fill((255, 255, 255))
     x, y = pygame.mouse.get_pos()
