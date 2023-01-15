@@ -1,5 +1,4 @@
 import pygame
-import sqlite3
 import random
 import database
 
@@ -32,25 +31,29 @@ class Ball(pygame.sprite.Sprite):
         if self.rect.left >= 1500:
             self.rect.left = 700
         else:
-            self.rect.left += 5
+            self.rect.left += 2
         if self.narp == 1:
-            self.rect.top -= 3
-            self.rect.left -= 3
+            self.rect.top -= 2
+            self.rect.left -= 2
         if self.narp == 2:
-            self.rect.left -= 5
-        if self.narp == 3:
-            self.rect.top += 3
-            self.rect.left -= 3
-        if self.rect.left <= 0:
-            self.rect.left += 4
-        if self.rect.bottom >= 800:
-            self.rect.top += 4
-            self.rect.left += 4
-        if self.rect.right >= 1500:
             self.rect.left -= 4
+        if self.narp == 3:
+            self.rect.top += 2
+            self.rect.left -= 2
+        if self.rect.left <= 0:
+            self.otskok = True
+            self.narp = random.randint(1, 3)
+        if self.rect.bottom >= height:
+            self.otskok = True
+            self.narp = random.randint(1, 3)
+            #self.rect.top += 2
+            #self.rect.left += 2
+        if self.rect.right >= width:
+            self.otskok = True
+            self.narp = random.randint(1, 3)
         if self.rect.top <= 0:
-            self.rect.top += 4
-            self.rect.left += 4
+            self.otskok = True
+            self.narp = random.randint(1, 3)
 
             class Stats():
                 def __init__(self):
@@ -106,10 +109,7 @@ class Enem(pygame.sprite.Sprite):
         if self.rect.top == height:
             self.rect.top = 0
         else:
-            self.rect.top += 5
-
-
-
+            self.rect.top += 1
 
 width = 1500
 height = 800
@@ -124,7 +124,7 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 
 pygame.init()
-FPS = 60
+FPS = 15
 
 win = pygame.display.set_mode((width, height))
 
@@ -156,15 +156,20 @@ clock = pygame.time.Clock()
 
 scores = 0
 
+game_over = False
 
 
-while True:
+print(database.get_data('scores', 'name, score'))
+
+while game_over == False:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
                 exit()
 
-    if(ball.rect.left >= 1425 and ball.rect.left <= (1425 + 55)) and (ball.rect.top >= 400 - 55 and ball.rect.top <=(400+ 55)):
+    if(ball.rect.left >= 1425 - 55 and ball.rect.left <= (1425 + 55)) and (ball.rect.top >= 400 - 55 * 2 and ball.rect.top <=(400+ 55 * 2)):
         scores += 1
+        if (ball.rect.left >= 75 - 55 and ball.rect.left <= (75 + 55)) and (ball.rect.top >= 400 - 55 * 2 and ball.rect.top <= (400 + 55 * 2)):
+            scores += 1
         ball.rect.left = 700
         ball.rect.top = 350
     hits = pygame.sprite.spritecollide(player, ball_sprites, False)
@@ -178,9 +183,10 @@ while True:
     win.fill((255, 255, 255))
     x, y = pygame.mouse.get_pos()
     pressed = pygame.mouse.get_pressed()
-    print(scores)
     if scores == 3:
+        game_over = True
         print('game over')
+        print('player win')
     if pressed[0]:
         print("1")
     pygame.draw.circle(win, red, (750, 400), 100)
@@ -215,3 +221,8 @@ while True:
     ball_sprites.draw(win)
     pygame.display.update()
 
+database.insert_data('scores', 'name, score', "'коби', " + str(scores))
+
+print(database.get_data('scores', 'name, score'))
+
+database.database.close()
