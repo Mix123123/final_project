@@ -3,17 +3,6 @@ import sqlite3
 import random
 import database
 
-def create_table(name):
-    # Здесь name - название таблицы
-    # Создаем запрос на создание таблицы, если таковой еще не существует
-    que_create = '''
-        CREATE TABLE IF NOT EXISTS ''' + name + '''(
-            id INTEGER PRIMARY KEY,
-            score TEXT
-        )
-    '''
-
-
 class Scores():
     def __init__(self, screen, stats):
         self.screen = screen
@@ -40,10 +29,10 @@ class Ball(pygame.sprite.Sprite):
     def update(self):
         if self.otskok:
             self.rect.left += 5
-        if self.rect.left == width:
+        if self.rect.left >= 1500:
             self.rect.left = 700
         else:
-            self.rect.left += 4
+            self.rect.left += 5
         if self.narp == 1:
             self.rect.top -= 3
             self.rect.left -= 3
@@ -53,14 +42,15 @@ class Ball(pygame.sprite.Sprite):
             self.rect.top += 3
             self.rect.left -= 3
         if self.rect.left <= 0:
-            self.narp == random.randint(1, 2)
+            self.rect.left += 4
         if self.rect.bottom >= 800:
-            self.narp == random.randint(1, 2)
+            self.rect.top += 4
+            self.rect.left += 4
         if self.rect.right >= 1500:
-            self.narp == random.randint(1, 2)
+            self.rect.left -= 4
         if self.rect.top <= 0:
-            self.narp == random.randint(1, 2)
-
+            self.rect.top += 4
+            self.rect.left += 4
 
             class Stats():
                 def __init__(self):
@@ -149,7 +139,6 @@ enemy = Enem()
 
 enemy.rect.left = 1250
 
-create_table('scores')
 
 all_sprites.add(player)
 
@@ -190,6 +179,8 @@ while True:
     x, y = pygame.mouse.get_pos()
     pressed = pygame.mouse.get_pressed()
     print(scores)
+    if scores == 3:
+        print('game over')
     if pressed[0]:
         print("1")
     pygame.draw.circle(win, red, (750, 400), 100)
